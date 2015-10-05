@@ -16,8 +16,8 @@ server.use(express.static(path.join(__dirname, 'public')));
 //
 // Register API middleware
 // -----------------------------------------------------------------------------
-server.use('/api/content', require('./api/content'));
-server.use('/api/account', require('./api/account'));
+server.use('/api/content', require('./server/api/content'));
+server.use('/api/account', require('./server/api/account'));
 
 //
 // Register server-side rendering middleware

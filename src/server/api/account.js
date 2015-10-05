@@ -6,6 +6,7 @@ const router = new Router();
 
 router.post('/register/', async (req, res, next) => {
   try {
+    console.log(req.body);
     res.status(200).send({
       username: 'cage',
       id: 1,
