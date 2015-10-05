@@ -8,10 +8,40 @@ import ReactDOM from 'react-dom/server';
 import Router from './routes';
 import Html from './components/Html';
 
+import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
+import session from 'express-session';
+import passport from 'passport';
+import flash from 'connect-flash';
+import mongoose from 'mongoose';
+import configDB from './server/config/database.js';
+import {sessionSecret} from './server/config/secret.js';
+import localPassport from './server/config/passport';
 const server = global.server = express();
+
+// configuration ===============================================================
+mongoose.connect(configDB.url); // connect to our database
+localPassport(passport); // pass passport for configuration
+
+//
+// set up our express application
+// -----------------------------------------------------------------------------
+server.use(morgan('dev')); // log every request to the console
+server.use(cookieParser()); // read cookies (needed for auth)
+server.use(bodyParser()); // get information from html forms
+server.set('view engine', 'jade');
 
 server.set('port', (process.env.PORT || 5000));
 server.use(express.static(path.join(__dirname, 'public')));
+
+//
+// required for passport
+// -----------------------------------------------------------------------------
+server.use(session({secret: sessionSecret})); // session secret
+server.use(passport.initialize());
+server.use(passport.session()); // persistent login sessions
+server.use(flash()); // use connect-flash for flash messages stored in session
 
 //
 // Register API middleware

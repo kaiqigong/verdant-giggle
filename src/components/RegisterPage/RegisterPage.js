@@ -35,11 +35,11 @@ class RegisterPage extends Component {
     this.context.onSetTitle(title);
     return (
       <div className="RegisterPage">
-        {this.state.username ? 'welcome:' : ''}{this.state.username}
+        {this.state.email ? 'welcome:' : ''}{this.state.email}
         <form className="RegisterPage-container"
           onSubmit={this::this.handleSubmit}>
           <h1>{title}</h1>
-          <input type="text" name="username" ref="username" placeholder="请输入用户名" />
+          <input type="text" name="email" ref="email" placeholder="请输入用户名" />
           <input type="password" name="password" ref="password" placeholder="请输入密码" />
           <button type="submit">
             提交
@@ -51,9 +51,9 @@ class RegisterPage extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    let [username, password] = [this.refs.username.value.trim(), this.refs.password.value.trim()];
+    let [email, password] = [this.refs.email.value.trim(), this.refs.password.value.trim()];
 
-    AccountActions.register({username, password});
+    AccountActions.register({email, password});
   }
 
   _onChange() {
