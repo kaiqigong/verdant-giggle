@@ -36,7 +36,7 @@ const HttpClient = {
     request
       .post(getUrl(path))
       .accept('application/json')
-      .send(JSON.stringify(data))
+      .send(data)
       .end((err, res) => {
         if (err) {
           reject(err);

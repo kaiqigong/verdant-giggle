@@ -6,7 +6,10 @@ import bcrypt from 'bcrypt-nodejs';
 // define the schema for our user model
 const userSchema = new Schema({
   local: {
-    email: String,
+    email: {
+      type: String,
+      unique: true,
+    },
     password: String,
   },
 });
@@ -18,7 +21,7 @@ userSchema.methods.generateHash = (password) => {
 };
 
 // checking if password is valid
-userSchema.methods.validPassword = (password) => {
+userSchema.methods.validPassword = function(password) {
   return bcrypt.compareSync(password, this.local.password);
 };
 

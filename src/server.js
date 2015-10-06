@@ -18,6 +18,7 @@ import mongoose from 'mongoose';
 import configDB from './server/config/database.js';
 import {sessionSecret} from './server/config/secret.js';
 import localPassport from './server/config/passport';
+
 const server = global.server = express();
 
 // configuration ===============================================================
@@ -48,6 +49,22 @@ server.use(flash()); // use connect-flash for flash messages stored in session
 // -----------------------------------------------------------------------------
 server.use('/api/content', require('./server/api/content'));
 server.use('/api/account', require('./server/api/account'));
+
+//
+// Error Handler
+// -----------------------------------------------------------------------------
+const errorHandler = (err, req, res, next) => {
+  // logger.error err
+  const result = {
+    name: err.name,
+    message: err.message,
+    errors: err.errors,
+    errCode: err.errCode,
+    errMsg: err.errMsg,
+  };
+  res.json(err.status || 500, result);
+};
+server.use(errorHandler);
 
 //
 // Register server-side rendering middleware
