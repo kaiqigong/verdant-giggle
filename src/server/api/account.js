@@ -1,7 +1,7 @@
 /*! React Starter Kit | MIT License | http://www.reactstarterkit.com/ */
 
 import { Router } from 'express';
-import User from '../models/user';
+import User from '../models/User';
 import passport from 'passport';
 import auth from '../auth/index';
 import {tokenExpireTime} from '../config/secret';
@@ -22,7 +22,7 @@ router.post('/register/', async (req, res, next) => {
   newUser.local.password = newUser.generateHash(password);
 
   // save the user
-  newUser.save((dbErr) => {
+  newUser.save((dbErr, user) => {
     if (dbErr) {
       return next({
         status: 400,
@@ -30,8 +30,10 @@ router.post('/register/', async (req, res, next) => {
       });
     }
 
-    // set cookie
-    return res.status(201).send(newUser);
+    const token = auth.signToken(user._id);
+
+    res.cookie('token', JSON.stringify(token), {expires: new Date(Date.now() + tokenExpireTime * 60000)});
+    res.status(200).json({token: token});
   });
 });
 
@@ -44,14 +46,26 @@ router.post('/login/', async (req, res, next) => {
     const token = auth.signToken(user._id);
 
     res.cookie('token', JSON.stringify(token), {expires: new Date(Date.now() + tokenExpireTime * 60000)});
-    res.json({token: token});
+    res.status(200).json({token: token});
   })(req, res, next);
 });
 
-router.get('/profile/', auth.isAuthenticated(), async (req, res, next) => {
-  console.log(req.user);
+router.get('/profile/', auth.verifyTokenCookie(), async (req, res, next) => {
+  try {
+    res.status(200).json(req.user);
+  } catch (error) {
+    next(error);
+  }
 });
 
+router.get('/logout/', async (req, res, next) => {
+  try {
+    res.clearCookie('token');
+    res.status(200).send();
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default router;
 

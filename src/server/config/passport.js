@@ -4,7 +4,7 @@
 import {Strategy as LocalStrategy} from 'passport-local';
 
 // load up the user model
-import User from '../models/user';
+import User from '../models/User';
 
 // expose this function to our app using module.exports
 export default (passport) => {
@@ -12,7 +12,7 @@ export default (passport) => {
     usernameField: 'email',
     passwordField: 'password',
   },
-  (req, email, password, done) => { // callback with email and password from our form
+  (email, password, done) => { // callback with email and password from our form
 
     // find a user whose email is the same as the forms email
     // we are checking to see if the user trying to login already exists
@@ -24,12 +24,12 @@ export default (passport) => {
 
       // if no user is found, return the message
       if (!user) {
-        return done(null, false, { message: 'This username is not registered.' });
+        return done(null, false, {message: 'This username is not registered.'});
       }
 
       // if the user is found but the password is wrong
       if (!user::user.validPassword(password)) {
-        return done(null, false, { message: 'This password is not correct.' });
+        return done(null, false, {message: 'This password is not correct.'});
       }
 
       // all is well, return successful user

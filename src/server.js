@@ -22,7 +22,12 @@ import localPassport from './server/config/passport';
 const server = global.server = express();
 
 // configuration ===============================================================
-mongoose.connect(configDB.url); // connect to our database
+mongoose.connect(configDB.url) // connect to our database
+.connection.on('error', (err) => {
+  console.log('connection error:' + err);
+}).once('open', () => {
+  console.log('open mongodb success');
+});
 localPassport(passport); // pass passport for configuration
 
 //
@@ -49,6 +54,7 @@ server.use(flash()); // use connect-flash for flash messages stored in session
 // -----------------------------------------------------------------------------
 server.use('/api/content', require('./server/api/content'));
 server.use('/api/account', require('./server/api/account'));
+server.use('/api/user', require('./server/api/user'));
 
 //
 // Error Handler
@@ -62,7 +68,7 @@ const errorHandler = (err, req, res, next) => {
     errCode: err.errCode,
     errMsg: err.errMsg,
   };
-  res.json(err.status || 500, result);
+  res.status(err.status || 500).json(result);
 };
 server.use(errorHandler);
 
@@ -96,7 +102,6 @@ server.get('*', async (req, res, next) => {
 //
 // Launch the server
 // -----------------------------------------------------------------------------
-
 server.listen(server.get('port'), () => {
   /* eslint-disable no-console */
   console.log('The server is running at http://localhost:' + server.get('port'));

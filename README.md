@@ -1,3 +1,10 @@
+## Plugins
+- React: 
+  - [react-form](http://prometheusresearch.github.io/react-forms/getting-started.html)
+  - [react-bootstrap](https://github.com/react-bootstrap/react-bootstrap)
+- Node:
+  - mongoose
+
 ## React Starter Kit — "isomorphic" web app boilerplate
 
 [![Support us on Bountysource](https://dl.dropboxusercontent.com/u/16006521/react-starter-kit/banner.png)](https://salt.bountysource.com/teams/react-starter-kit)<br>

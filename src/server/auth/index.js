@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import expressJwt from 'express-jwt';
 import compose from 'composable-middleware';
-import User from '../models/user';
+import User from '../models/User';
 import {sessionSecret, tokenExpireTime} from '../config/secret.js';
 
 /**
@@ -32,23 +32,6 @@ const isAuthenticated = (credentialsRequired) => {
     });
 };
 
-// /**
-//  * Checks if the user role meets the minimum requirements of the route
-//  */
-// function hasRole(roleRequired) {
-//   if (!roleRequired) throw new Error('Required role needs to be set');
-
-//   return compose()
-//     .use(isAuthenticated())
-//     .use(function meetsRequirements(req, res, next) {
-//       if (config.userRoles.indexOf(req.user.role) >= config.userRoles.indexOf(roleRequired)) {
-//         next();
-//       } else {
-//         res.send(403);
-//       }
-//     });
-// }
-
 /**
  * Returns a jwt token signed by the app secret
  */
@@ -72,32 +55,56 @@ const verifyTokenCookie = () => {
       if (req.cookies.token) {
         const token = req.cookies.token.replace(/"/g, '');
         jwt.verify(token, sessionSecret, null, (err, user) => {
-          if (err) return next(err);
-          if (user) req.user = user;
-          next();
+          if (err) {
+            return next(err);
+          }
+          if (user) {
+            req.user = user;
+            return next();
+          }
+          return next({message: '无法验证用户信息', status: 401});
         });
       } else {
-        next();
+        return res.sendStatus(401);
       }
     })
     .use((req, res, next) => {
-      if (req.user) {
-        User.findById(req.user._id, (err, user) => {
-          if (err) return next(err);
-          if (user) req.user = user;
-
+      User.findById(req.user._id, (err, user) => {
+        if (err) return next(err);
+        if (user) {
+          req.user = user;
           next();
-        });
-      } else {
-        next();
-      }
+        } else {
+          res.sendStatus(401);
+        }
+      });
     });
 };
+
+
+/**
+ * Checks if the user role meets the minimum requirements of the route
+ */
+function hasRole(roleRequired) {
+  if (!roleRequired) {
+    throw new Error('Required role needs to be set');
+  }
+  return compose()
+    .use(verifyTokenCookie())
+    .use((req, res, next) => {
+      if (req.user.roles && req.user.roles.indexOf(roleRequired) > -1) {
+        return next();
+      }
+      return next({message: '权限不足', status: 403});
+    });
+}
+
 
 export default {
   verifyTokenCookie,
   isAuthenticated,
   signToken,
+  hasRole,
   setTokenCookie,
 };
 

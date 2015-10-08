@@ -3,6 +3,7 @@
  */
 
 import Dispatcher from '../core/Dispatcher';
+import ActionTypes from '../constants/ActionTypes';
 
 const AccountActions = {
   /**
@@ -10,7 +11,14 @@ const AccountActions = {
    */
   register(form) {
     Dispatcher.dispatch({
-      actionType: 'ACCOUNT_CREATE',
+      actionType: ActionTypes.ACCOUNT_CREATE,
+      form,
+    });
+  },
+
+  login(form) {
+    Dispatcher.dispatch({
+      actionType: ActionTypes.ACCOUNT_LOGIN,
       form,
     });
   },

@@ -23,7 +23,6 @@ export default task('bundle', async () => new Promise((resolve, reject) => {
     if (err) {
       return reject(err);
     }
-
     console.log(stats.toString(config[0].stats));
 
     if (++bundlerRunCount === (global.WATCH ? config.length : 1)) {

@@ -35,7 +35,6 @@ class RegisterPage extends Component {
     this.context.onSetTitle(title);
     return (
       <div className="RegisterPage">
-        {this.state.email ? 'welcome:' : ''}{this.state.email}
         <form className="RegisterPage-container"
           onSubmit={this::this.handleSubmit}>
           <h1>{title}</h1>
