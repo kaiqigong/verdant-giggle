@@ -23,11 +23,11 @@ class RegisterPage extends Component {
   }
 
   componentDidMount() {
-    AccountStore.on('change', this::this._onChange);
+    AccountStore.on('change', this.onChange);
   }
 
   componentWillUnmount() {
-    AccountStore.removeListener('change', this::this._onChange);
+    AccountStore.removeListener('change', this.onChange);
   }
 
   render() {
@@ -59,6 +59,8 @@ class RegisterPage extends Component {
     console.log(this.getAccountState());
     this.setState(this.getAccountState());
   }
+
+  onChange = this::this._onChange;
 
 }
 
